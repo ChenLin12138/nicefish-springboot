@@ -20,6 +20,11 @@ public class PostServiceImpl implements IPostService {
     private IPostRepository postRepository;
 
     @Override
+    //利用@Cacheable对方法进行缓存
+    //value="posts"，声明一个名为posts的缓存
+    //key="T(String).valueOf(#var1.pageNumber).concat('-').concat(#var1.pageSize)"按照var1.pageNumber-var1.pageSize的方式缓存
+    //unless="#result==null"申明结果集为空则不缓存
+    //例子1-10
     @Cacheable(value="posts",key ="T(String).valueOf(#var1.pageNumber).concat('-').concat(#var1.pageSize)", unless="#result==null")
     public Page getPostsPaging(Pageable var1) {
         return postRepository.findAll(var1);
@@ -33,6 +38,8 @@ public class PostServiceImpl implements IPostService {
 
     //TODO:重新设计posts这个缓存的KV结构，避免清除整个缓存
     @Override
+    //利用@CacheEvict清除缓存
+    //存储过后，清空整个缓存
     @CacheEvict(value = "posts",allEntries = true)
     public PostEntity savePost(PostEntity postEntity) {
         return postRepository.save(postEntity);
