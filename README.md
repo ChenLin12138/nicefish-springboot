@@ -48,38 +48,47 @@ NiceFish（美人鱼） 是一个系列项目，目标是示范前后端分离�
 
 我本地的关键配置如下：
 
-    server {
-        listen       80;
-        server_name  localhost;
-        # 这里需要改成你本地的前端代码目录
-        root /home/ubuntu/workspace/nicefish-angular/;
-        index index.html;
-        
-        location / {
-            try_files $uri $uri/ /index.html;
-        }
-        
-        location /nicefish {
-            add_header From nicefish;
-            proxy_pass http://localhost:8080/nicefish;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-Port $server_port;
-            proxy_set_header Remote_Addr $remote_addr;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header Cookie $http_cookie;
-            proxy_redirect default;
-            proxy_buffering off;
-            proxy_cookie_path ~*^/.* /;
-            proxy_intercept_errors on;
-        }
-        
-        location ~ \.(html|js|css|png|jpg|jpeg|gif|ico|json|woff2|eot|ttf|svg|woff)$ {
-            # 这里需要改成你本地的前端代码目录
-            root /home/ubuntu/workspace/nicefish-angular/;
-        }
+server {
+    listen       80;
+    error_log  /Users/zdm/Desktop/nicefish.error_log debug;
+    server_name  nicefish.com;
+    # 这里需要改成你本地的前端代码目录
+    root /Users/zdm/web/NiceFish/;
+    index index.html;
+
+    location / {
+       #try_files $uri $uri/ /index.html;
+	proxy_pass http://localhost:4201/;
     }
+
+    location /nicefish/cms/ {
+        add_header From nicefish;
+        proxy_pass http://localhost:8080/nicefish/cms/;
+      # proxy_set_header X-Forwarded-Proto $scheme;
+      # proxy_set_header X-Forwarded-Port $server_port;
+      #  proxy_set_header Remote_Addr $remote_addr;
+      #  proxy_set_header Host $host;
+      #  proxy_set_header X-Real-IP $remote_addr;
+      #  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      #  proxy_set_header Cookie $http_cookie;
+      #  proxy_redirect default;
+      #  proxy_buffering off;
+      #  proxy_cookie_path ~*^/.* /;
+      #  proxy_intercept_errors on;
+    }
+
+    location /sockjs-node/ {
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_http_version 1.1;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_pass http://localhost:4201;
+     }
+
+    #location ~ \.(html|js|css|png|jpg|jpeg|gif|ico|json|woff2|eot|ttf|svg|woff)$ {
+        # 这里需要改成你本地的前端代码目录
+    #    root /Users/zdm/web/NiceFish/;
+    #}
 
 ### VS Code
 
